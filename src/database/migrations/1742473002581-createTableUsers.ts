@@ -10,6 +10,8 @@ export class CreateTableUser1742473002581 implements MigrationInterface {
             name: 'id',
             type: 'bigint',
             isPrimary: true,
+            isGenerated: true,
+            generationStrategy: 'increment',
           },
           {
             name: 'name',
@@ -28,10 +30,22 @@ export class CreateTableUser1742473002581 implements MigrationInterface {
             length: '100',
           },
           {
+            name: 'refreshToken',
+            type: 'varchar',
+            isNullable: true,
+            length: '100',
+          },
+          {
             name: 'isActive',
             type: 'int',
             width: 2,
             default: 1,
+          },
+          {
+            name: 'role',
+            type: 'varchar',
+            length: '60',
+            default: '"user"',
           },
           {
             name: 'emailVerifiedAt',
@@ -41,12 +55,16 @@ export class CreateTableUser1742473002581 implements MigrationInterface {
           {
             name: 'createdAt',
             type: 'datetime',
-            default: 'now()',
           },
           {
             name: 'updatedAt',
             type: 'datetime',
-            default: 'now()',
+          },
+        ],
+        indices: [
+          {
+            name: 'idx_refreshToken',
+            columnNames: ['refreshToken'],
           },
         ],
       }),
@@ -54,5 +72,7 @@ export class CreateTableUser1742473002581 implements MigrationInterface {
     );
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('users');
+  }
 }
