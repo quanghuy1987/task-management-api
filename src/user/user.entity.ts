@@ -6,9 +6,11 @@ import {
   UpdateDateColumn,
   BaseEntity,
   BeforeInsert,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { USER_ROLE } from '@src/constants';
+import { Task } from '@src/task/task.entity';
 
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
@@ -41,6 +43,9 @@ export class User extends BaseEntity {
 
   @Column({ type: 'datetime', default: () => 'NOW()' })
   emailVerifiedAt: string;
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 
   @BeforeInsert() async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);

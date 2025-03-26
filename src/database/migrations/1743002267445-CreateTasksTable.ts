@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export class CreateTableUser1742473002581 implements MigrationInterface {
+export class CreateTasksTable1743002267445 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'users',
+        name: 'tasks',
         columns: [
           {
             name: 'id',
@@ -14,42 +14,27 @@ export class CreateTableUser1742473002581 implements MigrationInterface {
             generationStrategy: 'increment',
           },
           {
-            name: 'name',
+            name: 'title',
             type: 'varchar',
-            length: '60',
+            length: '220',
           },
           {
-            name: 'email',
-            type: 'varchar',
-            isUnique: true,
-            length: '60',
-          },
-          {
-            name: 'password',
-            type: 'varchar',
-            length: '100',
-          },
-          {
-            name: 'refreshToken',
-            type: 'varchar',
+            name: 'description',
+            type: 'text',
             isNullable: true,
-            length: '100',
           },
           {
-            name: 'isActive',
-            type: 'int',
-            width: 2,
-            default: 1,
-          },
-          {
-            name: 'role',
+            name: 'status',
             type: 'varchar',
-            length: '60',
-            default: '"user"',
+            length: '20',
           },
           {
-            name: 'emailVerifiedAt',
-            type: 'datetime',
+            name: 'userId',
+            type: 'bigint',
+          },
+          {
+            name: 'parentId',
+            type: 'bigint',
             isNullable: true,
           },
           {
@@ -65,8 +50,12 @@ export class CreateTableUser1742473002581 implements MigrationInterface {
         ],
         indices: [
           {
-            name: 'idx_refreshToken',
-            columnNames: ['refreshToken'],
+            name: 'idx_UserId',
+            columnNames: ['userId'],
+          },
+          {
+            name: 'idx_ParentId',
+            columnNames: ['parentId'],
           },
         ],
       }),
@@ -75,6 +64,6 @@ export class CreateTableUser1742473002581 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('users');
+    await queryRunner.dropTable('tasks');
   }
 }

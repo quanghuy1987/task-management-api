@@ -1,15 +1,25 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Post,
+  Res,
+  Get,
+  Req,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { CreateUserDto } from '@src/user/dto/create-user.dto';
 import { UserService } from '@src/user/user.service';
 import { LoginUserDto } from '@src/user/dto/login-user.dto';
 import { VerifyUserDto } from '@src/user/dto/verify-user.dto';
+import { Public } from '@src/decorator/public-metadata.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly userService: UserService) {}
 
   @Post('/register')
+  @Public()
   async register(@Body() createUserReq: CreateUserDto, @Res() res: Response) {
     const user = await this.userService.create(createUserReq);
 
@@ -27,6 +37,7 @@ export class AuthController {
   }
 
   @Post('/login')
+  @Public()
   async login(@Body() userLoginReq: LoginUserDto, @Res() res: Response) {
     const user = await this.userService.login(userLoginReq);
     if (!user.error) {
@@ -43,6 +54,7 @@ export class AuthController {
   }
 
   @Post('/confirm')
+  @Public()
   async verifyEmail(
     @Body() verifyUserReq: VerifyUserDto,
     @Res() res: Response,
@@ -59,5 +71,21 @@ export class AuthController {
         message: user.error,
       });
     }
+  }
+
+  @Get('/me')
+  getUserDetail(@Req() req: Request, @Res() res: Response) {
+    const user = req['user'];
+    return res.status(HttpStatus.OK).json({
+      success: true,
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
   }
 }

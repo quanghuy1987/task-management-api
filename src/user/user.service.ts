@@ -22,16 +22,16 @@ export class UserService {
     private emailService: EmailService,
   ) {}
 
-  findOneByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findOneBy({ email: email });
+  findActiveOneByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findOneBy({ email: email, isActive: true });
   }
 
-  findOne(id: number): Promise<User | null> {
-    return this.usersRepository.findOneBy({ id });
+  findActiveOne(id: number): Promise<User | null> {
+    return this.usersRepository.findOneBy({ id, isActive: true });
   }
 
   async create(createUserReq: CreateUserDto): Promise<CommonReturn> {
-    const checkExist = await this.findOneByEmail(createUserReq.email);
+    const checkExist = await this.findActiveOneByEmail(createUserReq.email);
 
     if (checkExist) {
       return {
@@ -53,7 +53,7 @@ export class UserService {
   }
 
   async login(userLoginReq: LoginUserDto): Promise<CommonReturn> {
-    const user = await this.findOneByEmail(userLoginReq.email);
+    const user = await this.findActiveOneByEmail(userLoginReq.email);
 
     if (!user) {
       return {
@@ -97,7 +97,7 @@ export class UserService {
 
   async verifyEmail(verifyUserReq: VerifyUserDto): Promise<CommonReturn> {
     const decryptData = decrypt(verifyUserReq.token);
-    const user = await this.findOneByEmail(decryptData.email);
+    const user = await this.findActiveOneByEmail(decryptData.email);
     if (!user) {
       return {
         error: 'invalid_key',
@@ -133,6 +133,7 @@ export class UserService {
   async generateRefreshToken(refreshToken: string): Promise<string> {
     const checkExistToken = await this.usersRepository.findOneBy({
       refreshToken: refreshToken,
+      isActive: true,
     });
 
     if (checkExistToken) {
