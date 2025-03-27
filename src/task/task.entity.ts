@@ -8,6 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  RelationId,
 } from 'typeorm';
 import { User } from '@src/user/user.entity';
 
@@ -27,6 +28,9 @@ export class Task extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.tasks)
   user: User;
+
+  @RelationId((task: Task) => task.user)
+  userId: number;
 
   @ManyToOne(() => Task, (task) => task.subTasks, { nullable: true })
   parent?: Task;

@@ -7,7 +7,7 @@ import {
   Get,
   Req,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { CreateUserDto } from '@src/user/dto/create-user.dto';
 import { UserService } from '@src/user/user.service';
 import { LoginUserDto } from '@src/user/dto/login-user.dto';

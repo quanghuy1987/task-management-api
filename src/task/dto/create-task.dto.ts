@@ -10,6 +10,6 @@ export class CreateTaskDto {
   @IsEnum(TaskStatus)
   status: string;
 
-  userId: string;
+  userId: number;
   taskId?: string;
 }

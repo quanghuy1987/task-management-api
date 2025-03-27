@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -35,10 +35,24 @@ export class TaskService {
     });
   }
 
+  getAllByUser(user?: User): Promise<Task[]> {
+    const condition = {
+      parent: IsNull(),
+    };
+    if (user) {
+      condition['user'] = {
+        id: user.id,
+      };
+    }
+    return this.taskRepository.find({
+      where: condition,
+    });
+  }
+
   async create(createTaskReq: CreateTaskDto): Promise<CommonReturn> {
     const task = this.taskRepository.create(createTaskReq);
     const assignUser = await this.userService.findActiveOne(
-      parseInt(createTaskReq.userId),
+      createTaskReq.userId,
     );
     if (assignUser) {
       task.user = assignUser;
@@ -71,5 +85,16 @@ export class TaskService {
     task.status = updateTaskReq.status;
     task.save();
     return task;
+  }
+
+  delete(id: number): boolean {
+    const queryBuilder = this.taskRepository.createQueryBuilder();
+    queryBuilder
+      .delete()
+      .where('parent = :parentId', { parentId: id })
+      .execute();
+    const queryBuilderNew = this.taskRepository.createQueryBuilder();
+    queryBuilderNew.delete().where('id = :id', { id: id }).execute();
+    return true;
   }
 }
