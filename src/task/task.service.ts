@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -17,7 +17,14 @@ export class TaskService {
   ) {}
 
   findOne(id: number): Promise<Task | null> {
-    return this.taskRepository.findOneBy({ id });
+    return this.taskRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: {
+        parent: true,
+      },
+    });
   }
   getAllByTaskId(id: number, user?: User): Promise<Task[]> {
     const condition = {
@@ -36,9 +43,7 @@ export class TaskService {
   }
 
   getAllByUser(user?: User): Promise<Task[]> {
-    const condition = {
-      parent: IsNull(),
-    };
+    const condition = {};
     if (user) {
       condition['user'] = {
         id: user.id,
@@ -46,6 +51,9 @@ export class TaskService {
     }
     return this.taskRepository.find({
       where: condition,
+      relations: {
+        parent: true,
+      },
     });
   }
 
@@ -58,7 +66,7 @@ export class TaskService {
       task.user = assignUser;
     } else {
       return {
-        error: 'assigned_user_not_found',
+        error: [{ user: 'assigned_user_not_found' }],
         data: {},
       };
     }
@@ -74,17 +82,36 @@ export class TaskService {
       ...task,
     };
     return {
-      error: '',
+      error: null,
       data: taskAfterInsert,
     };
   }
 
-  update(updateTaskReq: UpdateTaskDto, task: Task): Task {
+  async update(
+    updateTaskReq: UpdateTaskDto,
+    task: Task,
+  ): Promise<CommonReturn> {
     task.title = updateTaskReq.title;
     task.description = updateTaskReq.description ?? undefined;
     task.status = updateTaskReq.status;
+    if (updateTaskReq.userId !== task.userId) {
+      const assignUser = await this.userService.findActiveOne(
+        updateTaskReq.userId,
+      );
+      if (assignUser) {
+        task.user = assignUser;
+      } else {
+        return {
+          error: [{ user: 'assigned_user_not_found' }],
+          data: {},
+        };
+      }
+    }
     task.save();
-    return task;
+    return {
+      error: null,
+      data: task,
+    };
   }
 
   delete(id: number): boolean {

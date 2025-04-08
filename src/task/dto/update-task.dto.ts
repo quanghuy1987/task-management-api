@@ -9,4 +9,5 @@ export class UpdateTaskDto {
 
   @IsEnum(TaskStatus)
   status: string;
+  userId: number;
 }

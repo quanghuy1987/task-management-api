@@ -1,4 +1,4 @@
 export class CommonReturn {
-  error: string;
+  error: Array<any> | null;
   data: any;
 }

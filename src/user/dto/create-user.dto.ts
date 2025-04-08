@@ -10,7 +10,12 @@ export class CreateUserDto {
   name: string;
 
   @MaxLength(50)
-  @IsEmail()
+  @IsEmail(
+    {},
+    {
+      message: 'email_invalid_format',
+    },
+  )
   email: string;
 
   @IsString()
@@ -24,8 +29,7 @@ export class CreateUserDto {
       minUppercase: 1,
     },
     {
-      message:
-        'Password must contain at least 1 uppercase, 1 lowercase, 1 special character, 1 number',
+      message: 'password_error_validation',
     },
   )
   password: string;

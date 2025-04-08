@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { CommonReturn } from '@src/return/common';
@@ -30,12 +30,20 @@ export class UserService {
     return this.usersRepository.findOneBy({ id, isActive: true });
   }
 
+  findAllActiveNotAdmin(): Promise<User[]> {
+    return this.usersRepository.findBy({ isActive: true, role: Not('admin') });
+  }
+
   async create(createUserReq: CreateUserDto): Promise<CommonReturn> {
     const checkExist = await this.findActiveOneByEmail(createUserReq.email);
 
     if (checkExist) {
       return {
-        error: 'duplicate_email',
+        error: [
+          {
+            email: 'email_exists',
+          },
+        ],
         data: {},
       };
     }
@@ -47,7 +55,7 @@ export class UserService {
     });
     this.emailService.sendUserWelcome(user, token);
     return {
-      error: '',
+      error: null,
       data: user,
     };
   }
@@ -57,20 +65,20 @@ export class UserService {
 
     if (!user) {
       return {
-        error: 'invalid_credentials',
+        error: [{ email: 'invalid_credentials' }],
         data: {},
       };
     }
     if (!bcrypt.compareSync(userLoginReq.password, user.password)) {
       return {
-        error: 'invalid_credentials',
+        error: [{ email: 'invalid_credentials' }],
         data: {},
       };
     }
 
     if (!user.emailVerifiedAt) {
       return {
-        error: 'user_not_verify_email',
+        error: [{ email: 'user_not_verify_email' }],
         data: {},
       };
     }
@@ -81,15 +89,15 @@ export class UserService {
     };
 
     return {
-      error: '',
+      error: null,
       data: {
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
-        access_token: await this.jwtService.signAsync(payload),
-        refresh_token: await this.jwtService.signAsync({
-          refresh_token: user.refreshToken,
+        accessToken: await this.jwtService.signAsync(payload),
+        refreshToken: await this.jwtService.signAsync({
+          refreshToken: user.refreshToken,
         }),
       },
     };
@@ -100,21 +108,21 @@ export class UserService {
     const user = await this.findActiveOneByEmail(decryptData.email);
     if (!user) {
       return {
-        error: 'invalid_key',
+        error: [{ token: 'invalid_token_key' }],
         data: {},
       };
     }
 
     if (user.emailVerifiedAt) {
       return {
-        error: 'email_already_verified',
+        error: [{ email: 'email_already_verified' }],
         data: {},
       };
     }
 
     if (parseInt(decryptData.expiredIn) < moment().unix()) {
       return {
-        error: 'key_expired',
+        error: [{ token: 'token_key_expired' }],
         data: {},
       };
     }
@@ -125,7 +133,7 @@ export class UserService {
     user.save();
 
     return {
-      error: '',
+      error: null,
       data: user,
     };
   }

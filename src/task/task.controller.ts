@@ -95,6 +95,13 @@ export class TaskController {
         title: task.title,
         description: task.description,
         status: task.status,
+        userId: task.userId,
+        parent: task.parent
+          ? {
+              id: task.parent.id,
+              title: task.parent.title,
+            }
+          : null,
         createdAt: task.createdAt,
         updatedAt: task.updatedAt,
       },
@@ -122,11 +129,18 @@ export class TaskController {
         error: 'you_are_not_allowed_to_take_this_action',
       });
     }
-    this.taskService.update(updateTaskDto, task);
-    return res.status(HttpStatus.OK).json({
-      success: true,
-      message: 'task_successfully_update',
-    });
+    const response = await this.taskService.update(updateTaskDto, task);
+    if (!response.error) {
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        message: 'task_successfully_update',
+      });
+    } else {
+      return res.status(HttpStatus.BAD_REQUEST).json({
+        success: false,
+        message: response.error,
+      });
+    }
   }
 
   @Post('/:id/subtasks')

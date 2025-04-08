@@ -88,4 +88,13 @@ export class AuthController {
       },
     });
   }
+
+  @Get('/users')
+  async getUsers(@Req() req: Request, @Res() res: Response) {
+    const users = await this.userService.findAllActiveNotAdmin();
+    return res.status(HttpStatus.OK).json({
+      success: true,
+      data: users,
+    });
+  }
 }
