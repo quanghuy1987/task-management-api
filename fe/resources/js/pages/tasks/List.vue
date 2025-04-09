@@ -86,12 +86,6 @@ const redirect = (page, item) => {
       <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
         {{ status }}
       </div>
-      <div class="sm:w-full md:w-5/6 m-auto">
-        <Button variant="default" class="rounded-md px-3.5 py-1.5 mb-3 float-right"  @click="redirect('create')">
-          <PlusCircle class="h-4 w-4" />
-          Add task
-        </Button>
-      </div>
       <table
           class="sm:w-full table-fixed md:w-5/6 text-sm text-left m-auto rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
