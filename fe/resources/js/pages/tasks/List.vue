@@ -73,18 +73,8 @@ const redirect = (page, item) => {
     case 'viewSubTask':
       url = route('subtask.detail', {'id': item.id});
       break;
-    case 'create':
-      url = route('task.create');
-      break;
-    case 'update':
-      url = route('task.get.detail.update',{'id': item.id});
-      break;
-    case 'updateSubTask':
-      url = route('subtask.get.detail.update',{'id': item.id});
-      break;
   }
   window.open(url, "_blank");
-
 }
 </script>
 
@@ -146,14 +136,6 @@ const redirect = (page, item) => {
                       class="'flex items-center rounded-md px-3.5 py-1.5 transition-colors text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60">
                 <component :is="Eye" class="-ml-1 h-4 w-4"/>
               </button>
-              <button v-if="can(user, item)" @click="redirect('update', item)"
-                      class="'flex items-center rounded-md px-3.5 py-1.5 transition-colors text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60">
-                <component :is="FilePenLine" class="-ml-1 h-4 w-4"/>
-              </button>
-              <button v-if="can(user, item)"
-                      class="'flex items-center rounded-md px-3.5 py-1.5 transition-colors text-neutral-500 hover:bg-red-300/60 hover:text-red-500">
-                <component :is="Trash2" class="-ml-1 h-4 w-4"/>
-              </button>
             </td>
           </tr>
           <tr v-if="item.subTasks.length > 0">
@@ -171,10 +153,6 @@ const redirect = (page, item) => {
                     <button v-if="can(user, subTask)" @click="redirect('viewSubTask', subTask)"
                             class="'flex items-center rounded-md px-3.5 py-1.5 transition-colors text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60">
                       <component :is="Eye" class="-ml-1 h-4 w-4"/>
-                    </button>
-                    <button v-if="can(user, subTask)" @click="redirect('updateSubTask', subTask)"
-                            class="'flex items-center rounded-md px-3.5 py-1.5 transition-colors text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60">
-                      <component :is="FilePenLine" class="-ml-1 h-4 w-4"/>
                     </button>
                   </td>
                 </tr>

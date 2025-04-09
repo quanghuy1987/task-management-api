@@ -54,6 +54,24 @@ services:
             memory: 2G
           reservations:
             memory: 512M
+    database:
+        image: mysql:8.0.33
+        restart: 'always'
+        ports:
+            - '33065:3306'
+        volumes:
+            - database_data:/var/lib/mysql
+        environment:
+            - MYSQL_DATABASE
+            - MYSQL_USER
+            - MYSQL_PASSWORD
+            - MYSQL_ROOT_PASSWORD=123456
+        deploy:
+            resources:
+                limits:
+                    memory: 2G
+                reservations:
+                    memory: 512M        
 networks:
     internal:
         ipam:
@@ -62,3 +80,4 @@ networks:
 volumes:
     nginx_data:
     php_data:
+    database_data:

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Task } from './task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -48,6 +48,8 @@ export class TaskService {
       condition['user'] = {
         id: user.id,
       };
+    } else {
+      condition['parent'] = IsNull();
     }
     return this.taskRepository.find({
       where: condition,

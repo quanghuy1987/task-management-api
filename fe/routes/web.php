@@ -28,7 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::get('/api/tasks', [ApiTaskController::class, 'index'])->name('api.task.index');
     Route::get('/api/tasks/{id}', [ApiTaskController::class, 'detail'])->name('api.task.detail');
+    Route::get('/tasks/{id}/subtasks', [ApiTaskController::class, 'getAllSubtasks'])->name('api.task.get.subTasks');
     Route::get('/api/users', [ApiUserController::class, 'index'])->name('api.user.index');
+    
 });
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
