@@ -62,6 +62,9 @@ const redirect = (page, item) => {
         case 'create':
             url = route('task.create');
             break;
+        case 'createSubTask':
+            url = route('task.create.subTask');
+            break;
         case 'update':
             url = route('task.get.detail.update',{'id': item.id});
             break;
@@ -119,15 +122,19 @@ const redirect = (page, item) => {
                             </svg>
                         </td>
                         <td class="px-3 py-2">
-                            {{ item.id + '-' +item.title }}
+                            {{ item.title }}
                         </td>
                         <td class="px-3 py-2">
-                            {{ can(user, item) ? item.description : '' }}
+                            {{ item.description }}
                         </td>
                         <td class="px-3 py-2 text-left">
-                            {{ can(user, item) ? statusMap[item.status] : '' }}
+                            {{  statusMap[item.status] }}
                         </td>
                         <td class="px-3 py-2 text-left">
+<!--                            <button @click="redirect('createSubTask', item)"-->
+<!--                                    class="'flex items-center rounded-md px-3.5 py-1.5 transition-colors text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60">-->
+<!--                                <component :is="PlusCircle" class="-ml-1 h-4 w-4"/>-->
+<!--                            </button>-->
                             <button @click="redirect('update', item)"
                                     class="'flex items-center rounded-md px-3.5 py-1.5 transition-colors text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60">
                                 <component :is="FilePenLine" class="-ml-1 h-4 w-4"/>

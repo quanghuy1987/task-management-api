@@ -39,6 +39,10 @@ class TaskController extends Controller
         return Inertia::render('tasks/Create');
     }
     
+    public function createSubTask() {
+        return Inertia::render('tasks/Create');
+    }
+
     /**
      * @param Request $request
      * @return RedirectResponse

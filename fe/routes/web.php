@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
     Route::get('/tasks/create', [TaskController::class, 'create'])->name('task.create');
     Route::get('/tasks/{id}', [TaskController::class, 'view'])->name('task.detail');
+    Route::get('/tasks/{id}/subtask', [TaskController::class, 'createSubTask'])->name('task.create.subTask');
     
     Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('task.put.update');
     Route::get('/tasks/{id}/detail', [TaskController::class, 'show'])->name('task.get.detail.update');
